@@ -1,0 +1,11 @@
+{
+    "LR": 1e-3,
+    "GAMMA": 0.99,
+    "BATCHSIZE": 500,
+    "EPOCHS": 100,
+    "TRAJECTORIES": 50,
+    "STD": 1,
+    "NETSIZE": 64,
+    "C2": 0
+}
+
