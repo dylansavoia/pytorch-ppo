@@ -1,4 +1,4 @@
-name: newtorch
+name: ppo
 channels:
   - pytorch
   - conda-forge

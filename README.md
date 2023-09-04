@@ -7,6 +7,14 @@ agent on it.
 
 **Environemnts must support continuous action spaces.**
 
+
+## Install
+Using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html):
+```bash
+$ conda env create --file environment.yml
+```
+
+## Train and Run Environments
 It is possible to run the code with the following command:
 ```bash
 $ python main.py -h
@@ -42,10 +50,10 @@ containing the required training parameters:
 |TRAJECTORIES| N. of trajectories to collect before performing a training session.|
 |MAX_STEPS| Maximum steps performed in the environment|
 |CHECKPOINT| N. of full model training before saving a checkpoint |
+|EPISODES| N. of full environment episodes performed |
 |STD| Standard Deviation to be applied to random actions chosen by the agent.|
 |NETSIZE| N. of hidden nodes. This is a simple 3-layer Feed-Forward network and the default 64 is good for simple environments.|
 |C2| Entropy coefficient for PPO.|
 
 You may just copy one among the ones in the models directory and tweak as needed.
-All parameters must appear.
 
