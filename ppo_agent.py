@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.distributions import Normal, MultivariateNormal
+from torch.distributions import Normal
 import numpy as np
-import sys
+import os
 from torch.utils.tensorboard import SummaryWriter
+from functools import reduce
+from operator import mul
 
 glob_i = 0
 glob_error = 0
@@ -25,10 +27,10 @@ class PPOAgent():
 
         self.WRITER = W
 
-        inp = env.observation_space.shape[0]
-        out = env.action_space.shape[0]
+        self.input_size = reduce(mul, env.observation_space.shape, 1)
+        self.out_size   = env.action_space.shape[0]
 
-        self.model = AgentNet(inp, out, h=net_size, std=net_std)
+        self.model = AgentNet(self.input_size, self.out_size, h=net_size, std=net_std)
         self.opt = optim.Adam(self.model.parameters(), lr=self.LR)
 
         self.trajectories = []
@@ -41,21 +43,21 @@ class PPOAgent():
     def __call__(self, state):
         # Each time an action is required, we save the
         # state value for computing advantages later
-        state = torch.FloatTensor(state)
+        state = torch.FloatTensor(state).reshape(1, self.input_size)
         normal, v = self.model(state) 
-        action = normal.sample()
+        action = normal.sample().reshape(1, self.out_size)
 
-        self.values.append(v.unsqueeze(0))
+        self.values.append(v)
         self.actions.append(action)
-        self.logAprob.append(normal.log_prob(action))
+        self.logAprob.append(normal.log_prob(action).squeeze(0))
 
-        return action
+        return action.numpy().reshape(self.out_size)
 
     def observe(self, s, r, s1, done, NEPISODE):
         if not self.TRAIN: return
 
-        s  = torch.FloatTensor(s).unsqueeze(0)
-        s1 = torch.FloatTensor(s1).unsqueeze(0)
+        s  = torch.FloatTensor(s).reshape(1, self.input_size)
+        s1 = torch.FloatTensor(s1).reshape(1, self.input_size)
 
         self.states.append(s)
 

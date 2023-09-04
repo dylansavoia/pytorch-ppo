@@ -7,11 +7,13 @@ from ppo_agent import PPOAgent
 import sys, os, json
 from glob import glob
 import argparse
+from pprint import pprint
 
 # Environemnt Params
-MODELS_PATH = 'models'
-EPISODES = 2000
-MAX_STEPS = 2000
+MODELS_PATH        = 'models'
+DEFAULT_EPISODES   = 2000
+DEFAULT_MAX_STEPS  = 2000
+DEFAULT_CHECKPOINT = 5
 
 ## These may be updated by arguments
 EnvName = 'MountainCarContinuous-v0'
@@ -28,19 +30,36 @@ def main():
     with open(params_path, 'r') as f:
         params = json.load(f)
 
-    EPOCHS  = params["EPOCHS"]
-    LR      = params["LR"]
-    C2      = params["C2"]
-    GAMMA   = params["GAMMA"]
-    STD     = params["STD"]
-    NETSIZE = params["NETSIZE"]
-    BATCHSIZE    = params["BATCHSIZE"]
-    TRAJECTORIES = params["TRAJECTORIES"]
+    EPOCHS        = params["EPOCHS"] if "EPOCHS" in params else 200
+    LR            = params["LR"] if "LR" in params else 1e-3
+    C2            = params["C2"] if "C2" in params else 0
+    GAMMA         = params["GAMMA"] if "GAMMA" in params else 0.99
+    STD           = params["STD"] if "STD" in params else 1
+    NETSIZE       = params["NETSIZE"] if "NETSIZE" in params else 64
+    BATCHSIZE     = params["BATCHSIZE"] if "BATCHSIZE" in params else 500
+    TRAJECTORIES  = params["TRAJECTORIES"] if "TRAJECTORIES" in params else 10
+    MAX_STEPS     = params["MAX_STEPS"] if "MAX_STEPS" in params else 2000
+    CHECKPOINT    = params["CHECKPOINT"] if "CHECKPOINT" in params else 5
+    EPISODES      = params["EPISODES"] if "EPISODES" in params else 2000
+
+    print("Environment:  ", EnvName)
+    print("Train:        ", TRAIN)
+    print("EPOCHS:       ", EPOCHS)
+    print("LR:           ", LR)
+    print("C2:           ", C2)
+    print("GAMMA:        ", GAMMA)
+    print("STD:          ", STD)
+    print("NETSIZE:      ", NETSIZE)
+    print("BATCHSIZE:    ", BATCHSIZE)
+    print("TRAJECTORIES: ", TRAJECTORIES)
+    print("MAX_STEPS:    ", MAX_STEPS)
+    print("CHECKPOINT:   ", CHECKPOINT)
+    print("EPISODES:     ", EPISODES)
 
     # save model after collecting N trajectories 
     # (which corresponds to when the update is calculated)
-    SAVE_STEP = 5 * TRAJECTORIES
-    save_model_name = os.path.join(MODELS_PATH, EnvName + ".model")
+    SAVE_STEP = CHECKPOINT * TRAJECTORIES
+    save_model_name = os.path.join(MODELS_PATH, EnvName + ".pth")
 
     total = 0
 
@@ -64,7 +83,7 @@ def main():
 
         for t in range(MAX_STEPS+1):
             # RL Step
-            action = agent(state.T)[0]
+            action = agent(state)
             new_state, reward, done, _, _ = env.step(action)
             
             # Impose done=True if last-step
@@ -102,6 +121,4 @@ EnvName = args.env
 TRAIN   = args.train
 RENDER  = not(TRAIN)
 
-print(f'EnvName: {EnvName}')
-print(f'Train: {TRAIN}')
 main()

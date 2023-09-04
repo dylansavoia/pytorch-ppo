@@ -3,7 +3,7 @@
     "GAMMA": 0.99,
     "BATCHSIZE": 500,
     "EPOCHS": 100,
-    "TRAJECTORIES": 50,
+    "TRAJECTORIES": 5,
     "STD": 1,
     "NETSIZE": 64,
     "C2": 0
