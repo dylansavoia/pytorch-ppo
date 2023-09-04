@@ -27,6 +27,7 @@ class PPOAgent():
 
         inp = env.observation_space.shape[0]
         out = env.action_space.shape[0]
+
         self.model = AgentNet(inp, out, h=net_size, std=net_std)
         self.opt = optim.Adam(self.model.parameters(), lr=self.LR)
 
@@ -75,19 +76,20 @@ class PPOAgent():
                 "LogP": Bufp
             })
 
-            self.states = []
-            self.actions = []
+            self.states   = []
+            self.actions  = []
             self.logAprob = []
-            self.values = []
-            self.rewards = []
+            self.values   = []
+            self.rewards  = []
 
             # Update Condition
-            if NEPISODE % self.NTRAJ == 0: 
+            if NEPISODE != 0 and (NEPISODE % self.NTRAJ) == 0: 
                 self.update(s1, done) 
 
     def update(self, s1, done):
         EPS = 0.2
 
+        print("Model training...")
         # Compute Discounted Rewards
         for tr in self.trajectories:
             g = []

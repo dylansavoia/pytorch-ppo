@@ -1,11 +1,12 @@
 # import mujoco_py
-import gym
+import gymnasium as gym
 import torch
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 from ppo_agent import PPOAgent
 import sys, os, json
 from glob import glob
+import argparse
 
 # Environemnt Params
 MODELS_PATH = 'models'
@@ -41,9 +42,9 @@ def main():
     SAVE_STEP = 5 * TRAJECTORIES
     save_model_name = os.path.join(MODELS_PATH, EnvName + ".model")
 
-    Tot = 0
+    total = 0
 
-    env = gym.make(EnvName)
+    env = gym.make(EnvName, render_mode="human" if RENDER else None)
     agent = PPOAgent(
             TRAIN, env=env,
             lr=LR, c2=C2,
@@ -59,25 +60,27 @@ def main():
 
 
     for i in range(EPISODES):
-        s = env.reset()
+        state, _ = env.reset()
 
-        for t in range(MAX_STEPS):
-            if RENDER: env.render()
-
+        for t in range(MAX_STEPS+1):
             # RL Step
-            a = agent(s)
-            s1, r, done, _ = env.step(a)
-            agent.observe(s, r, s1, done, i+1)
+            action = agent(state.T)[0]
+            new_state, reward, done, _, _ = env.step(action)
+            
+            # Impose done=True if last-step
+            if t == MAX_STEPS: done = True
 
-            Tot += r
-            s = s1
+            agent.observe(state, reward, new_state, done, i)
+
+            total += reward
+            state  = new_state
 
             if done: break
 
         # Print Performance
-        print("[%d] Steps: %d\tReward: %d" % (i, t+1, Tot))
-        writer.add_scalar('Reward', Tot, i)
-        Tot = 0
+        print(f"[{i}] Steps: {t}\tReward: {total}")
+        writer.add_scalar('Reward', total, i)
+        total = 0
 
         if TRAIN and (i % SAVE_STEP) == SAVE_STEP -1:
             agent.save(save_model_name)
@@ -85,30 +88,20 @@ def main():
 
     env.close()
 
-def checkArguments():
-    global EnvName, TRAIN, RENDER
-    print_usage = False
-    N = len(sys.argv)
 
-    if N == 1: return True
+envs_names = glob(f'{MODELS_PATH}/*.json')
+envs_names = [x.split('/')[-1].split('.')[0] for x in envs_names]
 
-    envs_names = glob(f'{MODELS_PATH}/*.json')
-    envs_names = [x.split('/')[-1].split('.')[0] for x in envs_names]
+parser = argparse.ArgumentParser(description="Train PPO models and run Gym environmnts")
+parser.add_argument('env', type=str, metavar="environment", help=", ".join(envs_names),
+                    choices=envs_names, default="MountainCarContinuous-v0")
+parser.add_argument('--train', action='store_true')
+args = parser.parse_args()
 
-    if N > 1: env = sys.argv[1]
-    if N > 2: TRAIN = sys.argv[2].lower() == 'true'
-    RENDER = not TRAIN
+EnvName = args.env
+TRAIN   = args.train
+RENDER  = not(TRAIN)
 
-    if env in envs_names:
-        EnvName = env
-    else:
-        print("Usage: python main.py <env_name> <train>")
-        print("<env_name>:\n\t" + "\n\t".join(envs_names))
-        print("")
-        print("<train>: True or False")
-
-
-checkArguments()
 print(f'EnvName: {EnvName}')
 print(f'Train: {TRAIN}')
 main()
