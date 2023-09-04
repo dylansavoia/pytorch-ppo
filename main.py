@@ -111,7 +111,7 @@ def main():
 envs_names = glob(f'{MODELS_PATH}/*.json')
 envs_names = [x.split('/')[-1].split('.')[0] for x in envs_names]
 
-parser = argparse.ArgumentParser(description="Train PPO models and run Gym environmnts")
+parser = argparse.ArgumentParser(description="Train PPO models and run Gym environments")
 parser.add_argument('env', type=str, metavar="environment", help=", ".join(envs_names),
                     choices=envs_names, default="MountainCarContinuous-v0")
 parser.add_argument('--train', action='store_true')

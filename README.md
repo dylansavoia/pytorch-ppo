@@ -5,13 +5,22 @@ The code is made of two files: ppo_agent.py which implements the PPO algorithm
 itself, and main.py which renders the chosen environment and runs the
 agent on it.
 
-**Environemnts must support continuous action spaces.**
+Inside the /models directory there are pre-trained models for demo, but any 
+**continuous action space** environment could be used (with varying degrees of success).
 
 
 ## Install
-Using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html):
+Install all dependencies using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html):
 ```bash
 $ conda env create --file environment.yml
+```
+
+Then, to run an environment, the relative platform and its dependencies must be installed as well.
+
+E.g. to install Box2d or Mujoco run:
+```bash
+$ pip install gymnasium[box2d]
+$ pip install gymnasium[mujoco]
 ```
 
 ## Train and Run Environments
@@ -20,7 +29,7 @@ It is possible to run the code with the following command:
 $ python main.py -h
 usage: main.py [-h] [--train] environment
 
-Train PPO models and run Gym environmnts
+Train PPO models and run Gym environments
 
 positional arguments:
   environment  BipedalWalker-v3, MountainCarContinuous-v0, Pendulum-v1

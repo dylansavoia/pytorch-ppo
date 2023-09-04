@@ -1,0 +1,14 @@
+{
+    "LR": 1e-3,
+    "GAMMA": 0.99,
+    "BATCHSIZE": 500,
+    "EPOCHS": 100,
+    "TRAJECTORIES": 5,
+    "EPISODES": 2000,
+    "CHECKPOINT": 5,
+    "MAX_STEPS": 2000,
+    "STD": 1,
+    "NETSIZE": 64,
+    "C2": 0
+}
+
