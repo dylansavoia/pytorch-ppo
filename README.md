@@ -1,6 +1,8 @@
 # Proximal Policy Optimization
 A py-torch implementation of the PPO algorithm.
 
+![Inverted Double Pendulum V4- Mujoco](./gifs/InvDoublePend.gif)
+
 The code is made of two files: ppo_agent.py which implements the PPO algorithm
 itself, and main.py which renders the chosen environment and runs the
 agent on it.
@@ -32,7 +34,8 @@ usage: main.py [-h] [--train] environment
 Train PPO models and run Gym environments
 
 positional arguments:
-  environment  BipedalWalker-v3, MountainCarContinuous-v0, Pendulum-v1
+  environment  MountainCarContinuous-v0, Pendulum-v1, InvertedPendulum-v4,
+               InvertedDoublePendulum-v4
 
 options:
   -h, --help   show this help message and exit
@@ -66,3 +69,21 @@ containing the required training parameters:
 
 You may just copy one among the ones in the models directory and tweak as needed.
 
+## Show Tensorboard plots
+During training, a _runs/_ directory is created containing the logs for tensorboard.
+
+To open a new tensorboard session with the logs run:
+
+```bash
+$ tensorboard --logdir=runs
+TensorFlow installation not found - running with reduced feature set.
+
+NOTE: Using experimental fast data loading logic. To disable, pass
+    "--load_fast=false" and report issues on GitHub. More details:
+    https://github.com/tensorflow/tensorboard/issues/4784
+
+Serving TensorBoard on localhost; to expose to the network, use a proxy or pass --bind_all
+TensorBoard 2.12.1 at http://localhost:6006/ (Press CTRL+C to quit)
+```
+
+Then you can navigate to the localhost address at the given port, to show the log
