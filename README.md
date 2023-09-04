@@ -3,9 +3,9 @@ A py-torch implementation of the PPO algorithm.
 
 ![Inverted Double Pendulum V4- Mujoco](./gifs/InvDoublePend.gif)
 
-The code is made of two files: ppo_agent.py which implements the PPO algorithm
-itself, and main.py which renders the chosen environment and runs the
-agent on it.
+The code is made of two files:
+- ppo_agent.py which implements the PPO algorithm itself,
+- main.py which renders the chosen environment and runs the agent on it.
 
 Inside the /models directory there are pre-trained models for demo, but any 
 **continuous action space** environment could be used (with varying degrees of success).
