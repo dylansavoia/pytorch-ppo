@@ -1,7 +1,8 @@
 # Proximal Policy Optimization
 A py-torch implementation of the PPO algorithm.
 
-![Inverted Double Pendulum V4- Mujoco](./gifs/InvDoublePend.gif)
+<div align="center"><img src=gifs/InvDoublePend.gif /></div>
+<br>
 
 The code is made of two files:
 - ppo_agent.py which implements the PPO algorithm itself,
